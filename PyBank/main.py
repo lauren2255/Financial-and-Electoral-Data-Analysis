@@ -3,44 +3,70 @@ import os
 import csv
 
 #path to collect budget data from Resources folder
-budgetdata_csv = os.path.join('..', 'Resources', 'budget_data.csv')
+csvpath = os.path.join('Resources', 'budget_data.csv')
+print(csvpath)
 
-#define function
-def analysis (budgetdata):
-    date = str(budgetdata[0])
-    amount = int(budgetdata[1])
+#make empty lists so append function can be used to add to them
+months = []
+amt_total = []
+total_change = []
 
-    months = []
-    amt_total = []
-    avg_change = []
-    
-    for rows in budgetdata:
-        months.append(date[:3])
-        amt_total.append(budgetdata[1])
-
-    # change = 
-    # avg_change = average(change)
-
-
-    # for i in budgetdata:
-    #     if inc_amount == max(inc_amount) in amount:
-    #         inc_date = 
-    
-    #     if dec_amount == max(dec_amount) in amount:
-    #         dec_date = 
-    
-# Read in the CSV file
-with open(budgetdata_csv, 'r') as csvfile:
+# Read in the csv file from the path
+with open(csvpath, 'r') as csvfile:
 
     # Split the data based on commas
     csvreader = csv.reader(csvfile, delimiter=',')
 
+    #there is a header, skip first row and start analyzing based on second row
     header = next(csvreader)
+        
+    #for loop to add values to the months + amt_total lists going down each row
+    for row in csvreader:
+        months.append(row[0])
+        amt_total.append(int(row[1]))
 
-    print(f'Financial Analysis')
-    print(f' --------------------')
-    print(f'Total Months: {months}')
-    print(f'Total: {total}')
-    print(f'Average Change:{avg_change}')
-    print(f'Greatest Increase in Profits: {inc_date} ({inc_amount})')
-    print(f'Greatest Decrease in Profits: {dec_date} ({dec_amount})')
+    #for loop to cycle through amount values and calculate each change between 2 values
+    for i in range(len(amt_total) - 1):
+        total_change.append(amt_total[i + 1] - amt_total[i])
+
+#identify greatest increase and decrease in profit change using max and min
+max_inc_amt = max(total_change)
+max_dec_amt = min(total_change)
+
+#pull index number of max and min profit value + 1 since change is in between month values
+max_inc_month_index = total_change.index(max(total_change)) + 1
+max_dec_month_index = total_change.index(min(total_change)) + 1
+
+#print financial analysis results to terminal
+print(f'Financial Analysis')
+print(f' --------------------')
+#total months is equivalent to the amount of month values using the len function
+print(f'Total Months: {len(months)}')
+#total amount of profit is sum of each profit value
+print(f'Total: ${sum(amt_total)}')
+#average of the total changes in between profit values
+print(f'Average Change: ${round(sum(total_change)/len(total_change), 2)}')
+#pull month at the index where the profit change amount is highest
+print(f'Greatest Increase in Profits: {months[max_inc_month_index]} (${max_inc_amt})')
+#pull month at the index where the profit change amount is lowest
+print(f'Greatest Decrease in Profits: {months[max_dec_month_index]} (${max_dec_amt})')
+
+#make path for text file to be saved in
+output_path = os.path.join('analysis', 'Financial_Analysis.txt')
+
+#using path, write the following strings 
+with open(output_path, "w") as textfile:
+    textfile.write("Financial Analysis")
+    #jump to new row using \n
+    textfile.write("\n")
+    textfile.write("----------------------")
+    textfile.write("\n")
+    textfile.write(f'Total Months: {len(months)}')
+    textfile.write("\n")
+    textfile.write(f'Total: ${sum(amt_total)}')
+    textfile.write("\n")
+    textfile.write(f'Average Change: ${round(sum(total_change)/len(total_change), 2)}')
+    textfile.write("\n")
+    textfile.write(f'Greatest Increase in Profits: {months[max_inc_month_index]} (${max_inc_amt})')
+    textfile.write("\n")
+    textfile.write(f'Greatest Decrease in Profits: {months[max_dec_month_index]} (${max_dec_amt})')
