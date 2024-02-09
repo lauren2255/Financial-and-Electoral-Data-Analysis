@@ -1,4 +1,4 @@
-# python-challenge
+# Financial and Electoral Data Analysis
 
 Two datasets, one with financial data and one with election data, were analyzed according to the specifications below:
 
